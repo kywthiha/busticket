@@ -12,9 +12,9 @@ namespace BusTicket.Controllers
 {
     public class BusesController : Controller
     {
-        private readonly BusTicketContactsContext _context;
+        private readonly BusTicketModalContext _context;
 
-        public BusesController(BusTicketContactsContext context)
+        public BusesController(BusTicketModalContext context)
         {
             _context = context;
         }
@@ -22,8 +22,8 @@ namespace BusTicket.Controllers
         // GET: Buses
         public async Task<IActionResult> Index()
         {
-            var busTicketContactsContext = _context.Bus.Include(b => b.BusOperator);
-            return View(await busTicketContactsContext.ToListAsync());
+            var busTicketModalContext = _context.Bus.Include(b => b.BusOperator);
+            return View(await busTicketModalContext.ToListAsync());
         }
 
         // GET: Buses/Details/5
@@ -57,7 +57,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,NoOfSeat,Type,BusOperatorID")] Bus bus)
+        public async Task<IActionResult> Create([Bind("ID,OwnerID,NoOfSeat,Type,BusOperatorID")] Bus bus)
         {
             if (ModelState.IsValid)
             {
@@ -91,7 +91,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,NoOfSeat,Type,BusOperatorID")] Bus bus)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,NoOfSeat,Type,BusOperatorID")] Bus bus)
         {
             if (id != bus.ID)
             {

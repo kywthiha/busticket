@@ -12,9 +12,9 @@ namespace BusTicket.Controllers
 {
     public class RoutesController : Controller
     {
-        private readonly BusTicketContactsContext _context;
+        private readonly BusTicketModalContext _context;
 
-        public RoutesController(BusTicketContactsContext context)
+        public RoutesController(BusTicketModalContext context)
         {
             _context = context;
         }
@@ -54,7 +54,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title")] Route route)
+        public async Task<IActionResult> Create([Bind("ID,OwnerID,Title")] Route route)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title")] Route route)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Title")] Route route)
         {
             if (id != route.ID)
             {

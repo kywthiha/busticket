@@ -3,56 +3,19 @@
   "defaultProvider": "unpkg",
   "libraries": [
     {
-      "library": "@coreui/coreui@3.2.2",
-      "destination": "wwwroot/lib/coreui/coreui/",
-      "files": [
-        "dist/css/coreui.css",
-        "dist/css/coreui.css.map",
-        "dist/css/coreui.min.css",
-        "dist/css/coreui.min.css.map",
-        "dist/js/coreui-utilities.js",
-        "dist/js/coreui-utilities.js.map",
-        "dist/js/coreui-utilities.min.js",
-        "dist/js/coreui-utilities.min.js.map",
-        "dist/js/coreui.bundle.js",
-        "dist/js/coreui.bundle.js.map",
-        "dist/js/coreui.bundle.min.js",
-        "dist/js/coreui.bundle.min.js.map",
-        "dist/js/coreui.esm.js",
-        "dist/js/coreui.esm.js.map",
-        "dist/js/coreui.esm.min.js",
-        "dist/js/coreui.esm.min.js.map",
-        "dist/js/coreui.js",
-        "dist/js/coreui.js.map",
-        "dist/js/coreui.min.js",
-        "dist/js/coreui.min.js.map"
-      ]
-    },
-    {
       "library": "@coreui/icons@2.0.0-beta.3",
       "destination": "wwwroot/lib/coreui/icons/",
       "files": [
-        "css/all.css",
-        "css/all.min.css",
-        "css/all.min.css.map",
-        "css/brand.css",
-        "css/brand.css.map",
-        "css/brand.min.css",
-        "css/brand.min.css.map",
-        "css/flag.css",
-        "css/flag.css.map",
-        "css/flag.min.css",
-        "css/flag.min.css.map",
-        "css/free.css",
-        "css/free.css.map",
-        "css/free.min.css",
-        "css/free.min.css.map"
-      ]
-    },
-    {
-      "library": "@coreui/icons@2.0.0-beta.3",
-      "destination": "wwwroot/lib/coreui/icons/",
-      "files": [
+        "fonts/CoreUI-Icons-Brand.eot",
+        "fonts/CoreUI-Icons-Brand.svg",
+        "fonts/CoreUI-Icons-Brand.ttf",
+        "fonts/CoreUI-Icons-Brand.woff",
+        "fonts/CoreUI-Icons-Brand.woff2",
+        "fonts/CoreUI-Icons-Free.eot",
+        "fonts/CoreUI-Icons-Free.svg",
+        "fonts/CoreUI-Icons-Free.ttf",
+        "fonts/CoreUI-Icons-Free.woff",
+        "fonts/CoreUI-Icons-Free.woff2",
         "css/all.css",
         "css/all.min.css",
         "css/all.min.css.map",
@@ -72,8 +35,30 @@
     }
   ,
 {
-  "library": "@coreui/icons@2.0.0-beta.3",
-  "destination": "wwwroot/lib/coreui/icons/"
+  "library": "@coreui/coreui@3.2.2",
+  "destination": "wwwroot/lib/coreui/coreui/",
+  "files": [
+    "dist/css/coreui.css",
+    "dist/css/coreui.css.map",
+    "dist/css/coreui.min.css",
+    "dist/css/coreui.min.css.map",
+    "dist/js/coreui-utilities.js",
+    "dist/js/coreui-utilities.js.map",
+    "dist/js/coreui-utilities.min.js",
+    "dist/js/coreui-utilities.min.js.map",
+    "dist/js/coreui.bundle.js",
+    "dist/js/coreui.bundle.js.map",
+    "dist/js/coreui.bundle.min.js",
+    "dist/js/coreui.bundle.min.js.map",
+    "dist/js/coreui.esm.js",
+    "dist/js/coreui.esm.js.map",
+    "dist/js/coreui.esm.min.js",
+    "dist/js/coreui.esm.min.js.map",
+    "dist/js/coreui.js",
+    "dist/js/coreui.js.map",
+    "dist/js/coreui.min.js",
+    "dist/js/coreui.min.js.map"
+  ]
 }
 ]
 }

@@ -15,11 +15,11 @@ namespace BusTicket.Controllers
 {
     public class ContactsController : Controller
     {
-        private readonly BusTicketContactsContext _context;
+        private readonly BusTicketModalContext _context;
         protected IAuthorizationService AuthorizationService { get; }
         protected UserManager<IdentityUser> UserManager { get; }
 
-        public ContactsController(BusTicketContactsContext context,
+        public ContactsController(BusTicketModalContext context,
             IAuthorizationService authorizationService,
             UserManager<IdentityUser> userManager)
         {

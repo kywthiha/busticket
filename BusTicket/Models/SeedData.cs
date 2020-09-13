@@ -15,8 +15,8 @@ namespace BusTicket.Models
 
         public static async Task Initialize(IServiceProvider serviceProvider, string testUserPw)
         {
-            using (var context = new BusTicketContactsContext(
-                serviceProvider.GetRequiredService<DbContextOptions<BusTicketContactsContext>>()))
+            using (var context = new BusTicketModalContext(
+                serviceProvider.GetRequiredService<DbContextOptions<BusTicketModalContext>>()))
             {
                 // For sample purposes seed both with the same password.
                 // Password is set with the following:
@@ -88,7 +88,7 @@ namespace BusTicket.Models
             return IR;
         }
 
-        public static void SeedDB(BusTicketContactsContext context, string adminID)
+        public static void SeedDB(BusTicketModalContext context, string adminID)
         {
             if (context.Contact.Any())
             {

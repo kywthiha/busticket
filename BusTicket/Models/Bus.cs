@@ -9,7 +9,7 @@ namespace BusTicket.Models
     public class Bus
     {
         public int ID { get; set; }
-
+        public int OwnerID { get; set; }
         [Required]
         public int NoOfSeat { get; set; }
         [Required]

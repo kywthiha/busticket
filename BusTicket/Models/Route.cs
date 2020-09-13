@@ -10,6 +10,8 @@ namespace BusTicket.Models
     {
         public int ID { get; set; }
 
+        public int OwnerID { get; set; }
+
         [Required]
         public string Title { get; set; }
 

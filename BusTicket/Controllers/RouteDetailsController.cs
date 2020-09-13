@@ -12,9 +12,9 @@ namespace BusTicket.Controllers
 {
     public class RouteDetailsController : Controller
     {
-        private readonly BusTicketContactsContext _context;
+        private readonly BusTicketModalContext _context;
 
-        public RouteDetailsController(BusTicketContactsContext context)
+        public RouteDetailsController(BusTicketModalContext context)
         {
             _context = context;
         }
@@ -22,8 +22,8 @@ namespace BusTicket.Controllers
         // GET: RouteDetails
         public async Task<IActionResult> Index()
         {
-            var busTicketContactsContext = _context.RouteDetail.Include(r => r.City).Include(r => r.Route);
-            return View(await busTicketContactsContext.ToListAsync());
+            var busTicketModalContext = _context.RouteDetail.Include(r => r.City).Include(r => r.Route);
+            return View(await busTicketModalContext.ToListAsync());
         }
 
         // GET: RouteDetails/Details/5

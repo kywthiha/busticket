@@ -28,8 +28,8 @@ namespace BusTicket
         {
             services.AddControllersWithViews();
 
-            services.AddDbContext<BusTicketContactsContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("BusTicketContactsContext")));
+            services.AddDbContext<BusTicketModalContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("BusTicketContextConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

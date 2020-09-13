@@ -51,6 +51,8 @@ namespace BusTicket.Areas.Identity
 
                 services.AddSingleton<IAuthorizationHandler,
                                       ContactManagerAuthorizationHandler>();
+                services.AddSingleton<IAuthorizationHandler,
+                                     ManagerAuthorizationHandler>();
             });
         }
     }

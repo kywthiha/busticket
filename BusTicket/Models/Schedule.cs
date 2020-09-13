@@ -9,7 +9,7 @@ namespace BusTicket.Models
     public class Schedule
     {
         public int ID { get; set; }
-
+        public int OwnerID { get; set; }
         [Required]
         [DataType(DataType.Time)]
         public DateTime DepatureTime { get; set; }

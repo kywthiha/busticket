@@ -9,7 +9,7 @@ namespace BusTicket.Models
     public class BusOperator
     {
         public int ID { get; set; }
-
+        public int OwnerID { get; set; }
         [Required]
         public string Name { get; set; }
         [DataType(DataType.PhoneNumber)]
