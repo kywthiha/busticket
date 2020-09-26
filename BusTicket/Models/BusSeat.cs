@@ -9,12 +9,18 @@ namespace BusTicket.Models
     public class BusSeat
     {
         public int ID { get; set; }
+
         [Required]
         public int SeatNo { get; set; }
+
         public int PositionX { get; set; }
+
         public int PositionY { get; set; }
-        public int BusID { get; set; }
-        public Bus Bus { get; set; }
+
+        public int BusTypeID { get; set; }
+        public BusType BusType { get; set; }
+
+        public ICollection<BookingDetail> BookingDetails { get; set; }
     }
    
 }

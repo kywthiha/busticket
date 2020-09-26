@@ -7,23 +7,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusTicket.Data;
 using BusTicket.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace BusTicket.Controllers
 {
-    public class BusesController : Controller
+    public class BusesController : BaseController
     {
-        private readonly BusTicketModalContext _context;
-
-        public BusesController(BusTicketModalContext context)
+        public BusesController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
         {
-            _context = context;
+
         }
+
 
         // GET: Buses
         public async Task<IActionResult> Index()
         {
-            var busTicketModalContext = _context.Bus.Include(b => b.BusOperator);
-            return View(await busTicketModalContext.ToListAsync());
+            var busTicketContext = _context.Buses.Include(b => b.BusOperator).Include(b => b.BusType).Include(b => b.Owner).Include(b => b.Route);
+            return View(await busTicketContext.ToListAsync());
         }
 
         // GET: Buses/Details/5
@@ -34,8 +35,11 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var bus = await _context.Bus
+            var bus = await _context.Buses
                 .Include(b => b.BusOperator)
+                .Include(b => b.BusType)
+                .Include(b => b.Owner)
+                .Include(b => b.Route)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (bus == null)
             {
@@ -48,7 +52,10 @@ namespace BusTicket.Controllers
         // GET: Buses/Create
         public IActionResult Create()
         {
-            ViewData["BusOperatorID"] = new SelectList(_context.BusOperator, "ID", "Address");
+            ViewData["BusOperatorID"] = new SelectList(_context.Set<BusOperator>(), "ID", "Address");
+            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name");
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id");
+            ViewData["RouteID"] = new SelectList(_context.Set<Route>(), "ID", "Name");
             return View();
         }
 
@@ -57,7 +64,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,OwnerID,NoOfSeat,Type,BusOperatorID")] Bus bus)
+        public async Task<IActionResult> Create([Bind("ID,FromDate,ToDate,RouteID,BusOperatorID,BusTypeID,OwnerID")] Bus bus)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +72,10 @@ namespace BusTicket.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusOperatorID"] = new SelectList(_context.BusOperator, "ID", "Address", bus.BusOperatorID);
+            ViewData["BusOperatorID"] = new SelectList(_context.Set<BusOperator>(), "ID", "Address", bus.BusOperatorID);
+            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name", bus.BusTypeID);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", bus.OwnerID);
+            ViewData["RouteID"] = new SelectList(_context.Set<Route>(), "ID", "Name", bus.RouteID);
             return View(bus);
         }
 
@@ -77,12 +87,15 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var bus = await _context.Bus.FindAsync(id);
+            var bus = await _context.Buses.FindAsync(id);
             if (bus == null)
             {
                 return NotFound();
             }
-            ViewData["BusOperatorID"] = new SelectList(_context.BusOperator, "ID", "Address", bus.BusOperatorID);
+            ViewData["BusOperatorID"] = new SelectList(_context.Set<BusOperator>(), "ID", "Address", bus.BusOperatorID);
+            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name", bus.BusTypeID);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", bus.OwnerID);
+            ViewData["RouteID"] = new SelectList(_context.Set<Route>(), "ID", "Name", bus.RouteID);
             return View(bus);
         }
 
@@ -91,7 +104,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,NoOfSeat,Type,BusOperatorID")] Bus bus)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FromDate,ToDate,RouteID,BusOperatorID,BusTypeID,OwnerID")] Bus bus)
         {
             if (id != bus.ID)
             {
@@ -118,7 +131,10 @@ namespace BusTicket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusOperatorID"] = new SelectList(_context.BusOperator, "ID", "Address", bus.BusOperatorID);
+            ViewData["BusOperatorID"] = new SelectList(_context.Set<BusOperator>(), "ID", "Address", bus.BusOperatorID);
+            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name", bus.BusTypeID);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", bus.OwnerID);
+            ViewData["RouteID"] = new SelectList(_context.Set<Route>(), "ID", "Name", bus.RouteID);
             return View(bus);
         }
 
@@ -130,8 +146,11 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var bus = await _context.Bus
+            var bus = await _context.Buses
                 .Include(b => b.BusOperator)
+                .Include(b => b.BusType)
+                .Include(b => b.Owner)
+                .Include(b => b.Route)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (bus == null)
             {
@@ -146,15 +165,15 @@ namespace BusTicket.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var bus = await _context.Bus.FindAsync(id);
-            _context.Bus.Remove(bus);
+            var bus = await _context.Buses.FindAsync(id);
+            _context.Buses.Remove(bus);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool BusExists(int id)
         {
-            return _context.Bus.Any(e => e.ID == id);
+            return _context.Buses.Any(e => e.ID == id);
         }
     }
 }

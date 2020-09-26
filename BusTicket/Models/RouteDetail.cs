@@ -13,10 +13,11 @@ namespace BusTicket.Models
 
         [Required]
         public int Order { get; set; }
-        public int RouteID { get; set; }
-        public int CityID { get; set; }
 
+        public int RouteID { get; set; }
         public Route Route { get; set; }
+
+        public int CityID { get; set; }
         public City City { get; set; }
     }
 }

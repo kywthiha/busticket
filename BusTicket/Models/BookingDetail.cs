@@ -11,12 +11,14 @@ namespace BusTicket.Models
         public int ID { get; set; }
 
         public int BookingID { get; set; }
-        public int BusSeatID { get; set; }
-
         public Booking Booking { get; set; }
+
+        public int BusSeatID { get; set; }
         public BusSeat BusSeat { get; set; }
+
+        public int BusPriceID { get; set; }
+        public BusPrice BusPrice { get; set; }
        
-        
     }
    
 }

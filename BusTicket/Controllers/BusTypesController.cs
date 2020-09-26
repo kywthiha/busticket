@@ -12,20 +12,21 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BusTicket.Controllers
 {
-    public class BusSeatsController : BaseController
+    public class BusTypesController : BaseController
     {
-        public BusSeatsController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
+        public BusTypesController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
         {
         }
 
-        // GET: BusSeats
+
+        // GET: BusTypes
         public async Task<IActionResult> Index()
         {
-            var busTicketContext = _context.BusSeats.Include(b => b.BusType);
+            var busTicketContext = _context.BusTypes.Include(b => b.Owner);
             return View(await busTicketContext.ToListAsync());
         }
 
-        // GET: BusSeats/Details/5
+        // GET: BusTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,42 +34,42 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var busSeat = await _context.BusSeats
-                .Include(b => b.BusType)
+            var busType = await _context.BusTypes
+                .Include(b => b.Owner)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (busSeat == null)
+            if (busType == null)
             {
                 return NotFound();
             }
 
-            return View(busSeat);
+            return View(busType);
         }
 
-        // GET: BusSeats/Create
+        // GET: BusTypes/Create
         public IActionResult Create()
         {
-            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name");
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id");
             return View();
         }
 
-        // POST: BusSeats/Create
+        // POST: BusTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,SeatNo,PositionX,PositionY,BusTypeID")] BusSeat busSeat)
+        public async Task<IActionResult> Create([Bind("ID,Name,Seats,Status,OwnerID")] BusType busType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(busSeat);
+                _context.Add(busType);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name", busSeat.BusTypeID);
-            return View(busSeat);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", busType.OwnerID);
+            return View(busType);
         }
 
-        // GET: BusSeats/Edit/5
+        // GET: BusTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,23 +77,23 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var busSeat = await _context.BusSeats.FindAsync(id);
-            if (busSeat == null)
+            var busType = await _context.BusTypes.FindAsync(id);
+            if (busType == null)
             {
                 return NotFound();
             }
-            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name", busSeat.BusTypeID);
-            return View(busSeat);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", busType.OwnerID);
+            return View(busType);
         }
 
-        // POST: BusSeats/Edit/5
+        // POST: BusTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,SeatNo,PositionX,PositionY,BusTypeID")] BusSeat busSeat)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Seats,Status,OwnerID")] BusType busType)
         {
-            if (id != busSeat.ID)
+            if (id != busType.ID)
             {
                 return NotFound();
             }
@@ -101,12 +102,12 @@ namespace BusTicket.Controllers
             {
                 try
                 {
-                    _context.Update(busSeat);
+                    _context.Update(busType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BusSeatExists(busSeat.ID))
+                    if (!BusTypeExists(busType.ID))
                     {
                         return NotFound();
                     }
@@ -117,11 +118,11 @@ namespace BusTicket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusTypeID"] = new SelectList(_context.Set<BusType>(), "ID", "Name", busSeat.BusTypeID);
-            return View(busSeat);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", busType.OwnerID);
+            return View(busType);
         }
 
-        // GET: BusSeats/Delete/5
+        // GET: BusTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,31 +130,31 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var busSeat = await _context.BusSeats
-                .Include(b => b.BusType)
+            var busType = await _context.BusTypes
+                .Include(b => b.Owner)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (busSeat == null)
+            if (busType == null)
             {
                 return NotFound();
             }
 
-            return View(busSeat);
+            return View(busType);
         }
 
-        // POST: BusSeats/Delete/5
+        // POST: BusTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var busSeat = await _context.BusSeats.FindAsync(id);
-            _context.BusSeats.Remove(busSeat);
+            var busType = await _context.BusTypes.FindAsync(id);
+            _context.BusTypes.Remove(busType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BusSeatExists(int id)
+        private bool BusTypeExists(int id)
         {
-            return _context.BusSeats.Any(e => e.ID == id);
+            return _context.BusTypes.Any(e => e.ID == id);
         }
     }
 }

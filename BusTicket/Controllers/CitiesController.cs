@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BusTicket.Data;
 using BusTicket.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace BusTicket.Controllers
 {
-    public class CitiesController : Controller
+    public class CitiesController : BaseController
     {
-        private readonly BusTicketModalContext _context;
-
-        public CitiesController(BusTicketModalContext context)
+        public CitiesController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
         {
-            _context = context;
         }
+
 
         // GET: Cities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.City.ToListAsync());
+            var busTicketContext = _context.Cities.Include(b => b.Owner);
+            return View(await busTicketContext.ToListAsync());
         }
 
         // GET: Cities/Details/5
@@ -33,7 +34,8 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.City
+            var city = await _context.Cities
+                .Include(c => c.Owner)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (city == null)
             {
@@ -46,6 +48,7 @@ namespace BusTicket.Controllers
         // GET: Cities/Create
         public IActionResult Create()
         {
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,OwnerID,Name")] City city)
+        public async Task<IActionResult> Create([Bind("ID,Name,Status,OwnerID")] City city)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace BusTicket.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
             return View(city);
         }
 
@@ -73,11 +77,12 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.City.FindAsync(id);
+            var city = await _context.Cities.FindAsync(id);
             if (city == null)
             {
                 return NotFound();
             }
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
             return View(city);
         }
 
@@ -86,7 +91,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Name")] City city)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Status,OwnerID")] City city)
         {
             if (id != city.ID)
             {
@@ -113,6 +118,7 @@ namespace BusTicket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
             return View(city);
         }
 
@@ -124,7 +130,8 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.City
+            var city = await _context.Cities
+                .Include(c => c.Owner)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (city == null)
             {
@@ -139,15 +146,15 @@ namespace BusTicket.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var city = await _context.City.FindAsync(id);
-            _context.City.Remove(city);
+            var city = await _context.Cities.FindAsync(id);
+            _context.Cities.Remove(city);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CityExists(int id)
         {
-            return _context.City.Any(e => e.ID == id);
+            return _context.Cities.Any(e => e.ID == id);
         }
     }
 }

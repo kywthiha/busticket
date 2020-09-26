@@ -8,12 +8,15 @@ using System.Threading.Tasks;
 
 namespace BusTicket.Models
 {
-    public class Route
+    public class BusType
     {
         public int ID { get; set; }
-
+       
         [Required]
         public string Name { get; set; }
+
+        [Required]
+        public int Seats { get; set; }
 
         [DefaultValue(true)]
         public bool Status { get; set; }
@@ -21,7 +24,7 @@ namespace BusTicket.Models
         public string OwnerID { get; set; }
         public IdentityUser Owner { get; set; }
 
-        public ICollection<RouteDetail> RouteDetails { get; set; }
         public ICollection<Bus> Buses { get; set; }
+        public ICollection<BusSeat> BusSeats { get; set; }
     }
 }
