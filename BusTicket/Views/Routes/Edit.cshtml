@@ -36,4 +36,69 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    Vue.component('city-input-component', {
+        template: `
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label" :for="'location'.concat(id+1)">Location {{ order+1 }}</label>
+                <div class="col-sm-5">
+                    <select v-model="selected" required class="form-control" :id="'location'.concat(id+1)" name="locations">
+                        <option value=""> Choose City </option>
+                        <option v-for="item in cities" :key="item.id" :value="item.id"> {{ item.name}} </option>
+                    </select>
+                </div>
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-primary" v-on:click="$emit('addLocation')">
+                    <span class="cil-plus btn-icon"></span>
+                </button>
+            </div>
+            <div class="col-sm-2">
+                <button type="button"  class="btn btn-danger" v-on:click="$emit('removeLocation')">
+                  <span class="cil-minus btn-icon"></span>
+                </button>
+            </div>
+           </div>
+        `,
+        props: ['cities','id','order'],
+        data() {
+            return {
+                selected: "",
+            }
+        }
+    })
+
+    Vue.component('city-list-component', {
+        template: `
+        <div>
+            <city-input-component v-for="(item, index) in locations" :order="index" :key="item" :id="item" :cities="cities" v-on:addLocation="addLocation(item)" v-on:removeLocation="removeLocation(item)"></city-input-component>
+        </div>
+        `,
+        data() {
+            return {
+                cities: null,
+                locations: [1,2],
+                count: 2,
+                selectedCities:null,
+            }
+        },
+        methods: {
+            addLocation(id) {
+                if (this.locations.length < this.cities.length) {
+                    const index = this.locations.indexOf(id);
+                    if (index > -1) {
+                        this.locations.splice(index + 1, 0, ++this.count);
+                    }
+                }
+
+            },
+            removeLocation(id) {
+                console.log(id)
+                if (this.locations.length > 2)
+                    this.locations = this.locations.filter(i => i !== id)
+
+            }
+        }
+    })
+</script>
 }

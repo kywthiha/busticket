@@ -10,29 +10,48 @@
     <h4>BusType</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Seats)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Seats)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Status)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Status)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Owner)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Owner.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Owner.UserName)
+        </dd>
+        <dt class="col-sm-2">
+            Bus Seat Map
+        </dt>
+        <dd class="col-sm-10">
+            <table>
+                <tbody>
+                    @foreach (var items in Model.BusSeats.OrderBy(b => b.SeatNo).GroupBy(b=>b.PositionX).ToList())
+                    {
+                        <tr>
+                            @foreach(var item in items){
+                            <td>
+                                [ @Html.DisplayFor(modelItem => item.SeatNo) ]
+                            </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </dd>
     </dl>
 </div>

@@ -36,6 +36,7 @@ namespace BusTicket.Controllers
 
             var busType = await _context.BusTypes
                 .Include(b => b.Owner)
+                .Include(b=>b.BusSeats)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (busType == null)
             {
@@ -57,11 +58,24 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Seats,Status,OwnerID")] BusType busType)
+        public async Task<IActionResult> Create([Bind("ID,Name,Seats")] BusType busType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(busType);
+                busType.OwnerID = _userManager.GetUserId(User);
+                busType.Status = true;
+                _context.Attach(busType);
+                busType.BusSeats = new List<BusSeat>();
+                int xx = 0;
+                for(int i = 0; i < busType.Seats; i+=4)
+                {
+                    for(int ii = 0; ii < 4 && (i + ii) < busType.Seats; ii++)
+                    {
+                        busType.BusSeats.Add(new BusSeat { BusTypeID = busType.ID, SeatNo = i+ii + 1,PositionX = xx,PositionY = ii });
+                    }
+                    xx++;
+                    
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -91,7 +105,7 @@ namespace BusTicket.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Seats,Status,OwnerID")] BusType busType)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Seats,Status")] BusType busType)
         {
             if (id != busType.ID)
             {
@@ -102,6 +116,25 @@ namespace BusTicket.Controllers
             {
                 try
                 {
+                    busType.OwnerID = _userManager.GetUserId(User);
+
+                    var busSeats = await _context.BusSeats
+                            .Where(m=>m.BusTypeID == busType.ID)
+                            .ToListAsync();
+                   
+                    _context.BusSeats.RemoveRange(busSeats);
+
+                    busType.BusSeats = new List<BusSeat>();
+                    int xx = 0;
+                    for (int i = 0; i < busType.Seats; i += 4)
+                    {
+                        for (int ii = 0; ii < 4 && (i + ii) < busType.Seats; ii++)
+                        {
+                            busType.BusSeats.Add(new BusSeat { BusTypeID = busType.ID, SeatNo = i + ii + 1, PositionX = xx, PositionY = ii });
+                        }
+                        xx++;
+
+                    }
                     _context.Update(busType);
                     await _context.SaveChangesAsync();
                 }

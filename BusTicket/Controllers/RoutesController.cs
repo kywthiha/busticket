@@ -87,7 +87,7 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var route = await _context.Routes.FindAsync(id);
+            var route = await _context.Routes.Include(r=>r.RouteDetails).FirstOrDefaultAsync(m=>m.ID == id);
             if (route == null)
             {
                 return NotFound();
