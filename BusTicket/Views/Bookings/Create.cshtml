@@ -1,0 +1,66 @@
+﻿@model BusTicket.Models.Booking
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Booking</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DepartureDate" class="control-label"></label>
+                <input asp-for="DepartureDate" class="form-control" />
+                <span asp-validation-for="DepartureDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SeatedDate" class="control-label"></label>
+                <input asp-for="SeatedDate" class="form-control" />
+                <span asp-validation-for="SeatedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmedDate" class="control-label"></label>
+                <input asp-for="ConfirmedDate" class="form-control" />
+                <span asp-validation-for="ConfirmedDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CanceledDate" class="control-label"></label>
+                <input asp-for="CanceledDate" class="form-control" />
+                <span asp-validation-for="CanceledDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TimeoutDate" class="control-label"></label>
+                <input asp-for="TimeoutDate" class="form-control" />
+                <span asp-validation-for="TimeoutDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BookingStatus" class="control-label"></label>
+                <select asp-for="BookingStatus" class="form-control"></select>
+                <span asp-validation-for="BookingStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TravellerID" class="control-label"></label>
+                <select asp-for="TravellerID" class ="form-control" asp-items="ViewBag.TravellerID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="OwnerID" class="control-label"></label>
+                <select asp-for="OwnerID" class ="form-control" asp-items="ViewBag.OwnerID"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

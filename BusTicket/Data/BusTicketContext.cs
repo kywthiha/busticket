@@ -15,5 +15,13 @@ namespace BusTicket.Data
         }
 
         public DbSet<BusTicket.Models.BusType> BusType { get; set; }
+
+        public DbSet<BusTicket.Models.Route> Route { get; set; }
+
+        public DbSet<BusTicket.Models.Traveller> Traveller { get; set; }
+
+        public DbSet<BusTicket.Models.Booking> Booking { get; set; }
+
+        public DbSet<BusTicket.Models.BusOperator> BusOperator { get; set; }
     }
 }

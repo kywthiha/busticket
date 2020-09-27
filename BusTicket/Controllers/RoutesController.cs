@@ -12,21 +12,21 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BusTicket.Controllers
 {
-    public class CitiesController : BaseController
+    public class RoutesController : BaseController
     {
-        public CitiesController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
+        public RoutesController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
         {
         }
 
 
-        // GET: Cities
+        // GET: Routes
         public async Task<IActionResult> Index()
         {
-            var busTicketContext = _context.Cities.Include(b => b.Owner);
+            var busTicketContext = _context.Routes.Include(r => r.Owner);
             return View(await busTicketContext.ToListAsync());
         }
 
-        // GET: Cities/Details/5
+        // GET: Routes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,44 +34,52 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Owner)
+            var route = await _context.Routes
+                .Include(r => r.Owner)
+                .Include(r=>r.RouteDetails)
+                .ThenInclude(rd=>rd.City)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (city == null)
+            if (route == null)
             {
                 return NotFound();
             }
 
-            return View(city);
+            return View(route);
         }
 
-        // GET: Cities/Create
+        // GET: Routes/Create
         public IActionResult Create()
         {
             ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id");
+            ViewData["City"] = _context.Cities.ToList();
             return View();
         }
 
-        // POST: Cities/Create
+        // POST: Routes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name")] City city)
+        public async Task<IActionResult> Create([Bind("ID,Name")] Route route,int [] locations)
         {
             if (ModelState.IsValid)
             {
-                city.OwnerID = _userManager.GetUserId(User);
-                city.Status = true;
-                _context.Add(city);
+                route.OwnerID = _userManager.GetUserId(User);
+                route.Status = true;
+                _context.Attach(route);
+                route.RouteDetails = new List<RouteDetail>();
+                for (int i=0; i < locations.Length; i++)
+                {
+                    route.RouteDetails.Add(new RouteDetail{ RouteID=route.ID , CityID = locations[i] , Order = i+1});
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", route.OwnerID);
+            return View(route);
         }
 
-        // GET: Cities/Edit/5
+        // GET: Routes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -79,23 +87,23 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities.FindAsync(id);
-            if (city == null)
+            var route = await _context.Routes.FindAsync(id);
+            if (route == null)
             {
                 return NotFound();
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", route.OwnerID);
+            return View(route);
         }
 
-        // POST: Cities/Edit/5
+        // POST: Routes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Status")] City city)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Status")] Route route)
         {
-            if (id != city.ID)
+            if (id != route.ID)
             {
                 return NotFound();
             }
@@ -104,13 +112,13 @@ namespace BusTicket.Controllers
             {
                 try
                 {
-                    city.OwnerID = _userManager.GetUserId(User);
-                    _context.Update(city);
+                    route.OwnerID = _userManager.GetUserId(User);
+                    _context.Update(route);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CityExists(city.ID))
+                    if (!RouteExists(route.ID))
                     {
                         return NotFound();
                     }
@@ -121,11 +129,11 @@ namespace BusTicket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", route.OwnerID);
+            return View(route);
         }
 
-        // GET: Cities/Delete/5
+        // GET: Routes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,31 +141,31 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Owner)
+            var route = await _context.Routes
+                .Include(r => r.Owner)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (city == null)
+            if (route == null)
             {
                 return NotFound();
             }
 
-            return View(city);
+            return View(route);
         }
 
-        // POST: Cities/Delete/5
+        // POST: Routes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var city = await _context.Cities.FindAsync(id);
-            _context.Cities.Remove(city);
+            var route = await _context.Routes.FindAsync(id);
+            _context.Routes.Remove(route);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CityExists(int id)
+        private bool RouteExists(int id)
         {
-            return _context.Cities.Any(e => e.ID == id);
+            return _context.Routes.Any(e => e.ID == id);
         }
     }
 }

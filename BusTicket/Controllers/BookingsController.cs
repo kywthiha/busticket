@@ -12,21 +12,21 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BusTicket.Controllers
 {
-    public class CitiesController : BaseController
+    public class BookingsController : BaseController
     {
-        public CitiesController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
+        public BookingsController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
         {
         }
 
 
-        // GET: Cities
+        // GET: Bookings
         public async Task<IActionResult> Index()
         {
-            var busTicketContext = _context.Cities.Include(b => b.Owner);
+            var busTicketContext = _context.Bookings.Include(b => b.Owner).Include(b => b.Traveller);
             return View(await busTicketContext.ToListAsync());
         }
 
-        // GET: Cities/Details/5
+        // GET: Bookings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,44 +34,45 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Owner)
+            var booking = await _context.Bookings
+                .Include(b => b.Owner)
+                .Include(b => b.Traveller)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (city == null)
+            if (booking == null)
             {
                 return NotFound();
             }
 
-            return View(city);
+            return View(booking);
         }
 
-        // GET: Cities/Create
+        // GET: Bookings/Create
         public IActionResult Create()
         {
             ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id");
+            ViewData["TravellerID"] = new SelectList(_context.Travellers, "ID", "ID");
             return View();
         }
 
-        // POST: Cities/Create
+        // POST: Bookings/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name")] City city)
+        public async Task<IActionResult> Create([Bind("ID,DepartureDate,SeatedDate,ConfirmedDate,CanceledDate,TimeoutDate,BookingStatus,TravellerID,OwnerID")] Booking booking)
         {
             if (ModelState.IsValid)
             {
-                city.OwnerID = _userManager.GetUserId(User);
-                city.Status = true;
-                _context.Add(city);
+                _context.Add(booking);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", booking.OwnerID);
+            ViewData["TravellerID"] = new SelectList(_context.Travellers, "ID", "ID", booking.TravellerID);
+            return View(booking);
         }
 
-        // GET: Cities/Edit/5
+        // GET: Bookings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -79,23 +80,24 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities.FindAsync(id);
-            if (city == null)
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
             {
                 return NotFound();
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", booking.OwnerID);
+            ViewData["TravellerID"] = new SelectList(_context.Travellers, "ID", "ID", booking.TravellerID);
+            return View(booking);
         }
 
-        // POST: Cities/Edit/5
+        // POST: Bookings/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Status")] City city)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,DepartureDate,SeatedDate,ConfirmedDate,CanceledDate,TimeoutDate,BookingStatus,TravellerID,OwnerID")] Booking booking)
         {
-            if (id != city.ID)
+            if (id != booking.ID)
             {
                 return NotFound();
             }
@@ -104,13 +106,12 @@ namespace BusTicket.Controllers
             {
                 try
                 {
-                    city.OwnerID = _userManager.GetUserId(User);
-                    _context.Update(city);
+                    _context.Update(booking);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CityExists(city.ID))
+                    if (!BookingExists(booking.ID))
                     {
                         return NotFound();
                     }
@@ -121,11 +122,12 @@ namespace BusTicket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", booking.OwnerID);
+            ViewData["TravellerID"] = new SelectList(_context.Travellers, "ID", "ID", booking.TravellerID);
+            return View(booking);
         }
 
-        // GET: Cities/Delete/5
+        // GET: Bookings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,31 +135,32 @@ namespace BusTicket.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Owner)
+            var booking = await _context.Bookings
+                .Include(b => b.Owner)
+                .Include(b => b.Traveller)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (city == null)
+            if (booking == null)
             {
                 return NotFound();
             }
 
-            return View(city);
+            return View(booking);
         }
 
-        // POST: Cities/Delete/5
+        // POST: Bookings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var city = await _context.Cities.FindAsync(id);
-            _context.Cities.Remove(city);
+            var booking = await _context.Bookings.FindAsync(id);
+            _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CityExists(int id)
+        private bool BookingExists(int id)
         {
-            return _context.Cities.Any(e => e.ID == id);
+            return _context.Bookings.Any(e => e.ID == id);
         }
     }
 }

@@ -12,90 +12,88 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BusTicket.Controllers
 {
-    public class CitiesController : BaseController
+    public class TravellersController : BaseController
     {
-        public CitiesController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
+        public TravellersController(BusTicketDataContext context, IAuthorizationService authorizationService, UserManager<IdentityUser> userManager) : base(context, authorizationService, userManager)
         {
         }
 
 
-        // GET: Cities
+        // GET: Travellers
         public async Task<IActionResult> Index()
         {
-            var busTicketContext = _context.Cities.Include(b => b.Owner);
+            var busTicketContext = _context.Travellers.Include(t => t.Owner);
             return View(await busTicketContext.ToListAsync());
         }
 
-        // GET: Cities/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Travellers/Details/5
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Owner)
+            var traveller = await _context.Travellers
+                .Include(t => t.Owner)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (city == null)
+            if (traveller == null)
             {
                 return NotFound();
             }
 
-            return View(city);
+            return View(traveller);
         }
 
-        // GET: Cities/Create
+        // GET: Travellers/Create
         public IActionResult Create()
         {
             ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id");
             return View();
         }
 
-        // POST: Cities/Create
+        // POST: Travellers/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name")] City city)
+        public async Task<IActionResult> Create([Bind("ID,Name,Gender,Email,PhoneNumber,Address,OwnerID")] Traveller traveller)
         {
             if (ModelState.IsValid)
             {
-                city.OwnerID = _userManager.GetUserId(User);
-                city.Status = true;
-                _context.Add(city);
+                _context.Add(traveller);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", traveller.OwnerID);
+            return View(traveller);
         }
 
-        // GET: Cities/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Travellers/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var city = await _context.Cities.FindAsync(id);
-            if (city == null)
+            var traveller = await _context.Travellers.FindAsync(id);
+            if (traveller == null)
             {
                 return NotFound();
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", traveller.OwnerID);
+            return View(traveller);
         }
 
-        // POST: Cities/Edit/5
+        // POST: Travellers/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Status")] City city)
+        public async Task<IActionResult> Edit(string id, [Bind("ID,Name,Gender,Email,PhoneNumber,Address,OwnerID")] Traveller traveller)
         {
-            if (id != city.ID)
+            if (id != traveller.ID)
             {
                 return NotFound();
             }
@@ -104,13 +102,12 @@ namespace BusTicket.Controllers
             {
                 try
                 {
-                    city.OwnerID = _userManager.GetUserId(User);
-                    _context.Update(city);
+                    _context.Update(traveller);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CityExists(city.ID))
+                    if (!TravellerExists(traveller.ID))
                     {
                         return NotFound();
                     }
@@ -121,43 +118,43 @@ namespace BusTicket.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", city.OwnerID);
-            return View(city);
+            ViewData["OwnerID"] = new SelectList(_context.Set<IdentityUser>(), "Id", "Id", traveller.OwnerID);
+            return View(traveller);
         }
 
-        // GET: Cities/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Travellers/Delete/5
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .Include(c => c.Owner)
+            var traveller = await _context.Travellers
+                .Include(t => t.Owner)
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (city == null)
+            if (traveller == null)
             {
                 return NotFound();
             }
 
-            return View(city);
+            return View(traveller);
         }
 
-        // POST: Cities/Delete/5
+        // POST: Travellers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var city = await _context.Cities.FindAsync(id);
-            _context.Cities.Remove(city);
+            var traveller = await _context.Travellers.FindAsync(id);
+            _context.Travellers.Remove(traveller);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CityExists(int id)
+        private bool TravellerExists(string id)
         {
-            return _context.Cities.Any(e => e.ID == id);
+            return _context.Travellers.Any(e => e.ID == id);
         }
     }
 }

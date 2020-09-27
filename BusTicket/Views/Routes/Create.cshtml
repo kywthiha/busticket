@@ -1,0 +1,90 @@
+﻿@model BusTicket.Models.Route
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+<h4>Route</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <city-list-component></city-list-component>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    Vue.component('city-input-component', {
+        template: `
+            <div class="form-group">
+                <label class="control-label" :for="'location'.concat(id+1)">Location {{ order+1 }}</label>
+                <select v-model="selected" class="form-control" :id="'location'.concat(id+1)" name="locations">
+                    <option value=""> Choose City </option>
+                    <option v-for="item in cities" :key="item.id" :value="item.id"> {{ item.name}} </option>
+                </select>
+                <button type="button" v-on:click="$emit('addLocation')">+</button>
+                <button type="button" v-on:click="$emit('removeLocation')">-</button>
+            </div>
+        `,
+        props: ['cities','id','order'],
+        data() {
+            return {
+                selected: "",
+            }
+        }
+    })
+
+    Vue.component('city-list-component', {
+        template: `
+        <div>
+            <city-input-component v-for="(item, index) in locations" :order="index" :key="item" :id="item" :cities="cities" v-on:addLocation="addLocation(item)" v-on:removeLocation="removeLocation(item)"></city-input-component>
+            {{ cities }}
+        </div>
+        `,
+        data() {
+            return {
+                cities: @Html.Raw(Json.Serialize(ViewData["City"])),
+                locations: [1,2],
+                count:2,
+            }
+        },
+        methods: {
+            addLocation(id) {
+                if (this.locations.length < this.cities.length) {
+                    const index = this.locations.indexOf(id);
+                    if (index > -1) {
+                        this.locations.splice(index + 1, 0, ++this.count);
+                    }
+                }
+                
+              
+            },
+            removeLocation(id) {
+                console.log(id)
+                if (this.locations.length > 2)
+                    this.locations = this.locations.filter(i => i !== id)
+               
+            }
+        }
+    })
+</script>
+
+}

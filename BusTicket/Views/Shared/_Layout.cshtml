@@ -27,6 +27,7 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="~/lib/coreui/coreui/dist/css/coreui.min.css">
     <link rel="stylesheet" href="~/lib/coreui/icons/css/all.min.css">
+    <script src="~/lib/vue/dist/vue.js"></script>
 </head>
 <body class="c-app">
     <div class="c-sidebar c-sidebar-dark c-sidebar-fixed c-sidebar-lg-show" id="sidebar">
@@ -132,14 +133,14 @@
             <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar" data-class="c-sidebar-show">
                 <span class="c-sidebar-nav-icon"><i class="cil-menu"></i></span>
             </button><a class="c-header-brand d-lg-none" href="#">
-            @*<span class="c-sidebar-nav-icon">
-                Khaing
-            </span>*@
+                @*<span class="c-sidebar-nav-icon">
+                        Khaing
+                    </span>*@
             </a>
-                     <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
-      
-                         <i class="cil-menu"></i>
-                     </button>
+            <button class="c-header-toggler c-class-toggler mfs-3 d-md-down-none" type="button" data-target="#sidebar" data-class="c-sidebar-lg-show" responsive="true">
+
+                <i class="cil-menu"></i>
+            </button>
             <ul class="c-header-nav d-md-down-none">
                 <li class="c-header-nav-item px-3"><a class="c-header-nav-link" href="#">@ViewData["Title"]</a></li>
             </ul>
@@ -154,8 +155,8 @@
                     <a class="c-header-nav-link" href="#">
                         <i class="cil-list-rich"></i>
                         @*<svg class="c-icon">
-                    <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-list-rich"></use>
-                </svg>*@
+                                <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-list-rich"></use>
+                            </svg>*@
                     </a>
                 </li>
                 <li class="c-header-nav-item d-md-down-none mx-2">
@@ -205,14 +206,14 @@
                         </div>
                     </li>
                 }
-                </ul>
+            </ul>
         </header>
         <div class="c-body">
             <main class="c-main">
                 <div class="container-fluid">
                     <div class="fade-in">
-
-                        <div>
+                        <div id="app">
+                            {{ message }}
                             @RenderBody()
                         </div>
 
@@ -231,5 +232,13 @@
     <script src="~/lib/coreui/coreui/dist/js/coreui.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!'
+            }
+        })
+    </script>
 </body>
 </html>

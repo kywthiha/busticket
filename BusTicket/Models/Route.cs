@@ -23,5 +23,6 @@ namespace BusTicket.Models
 
         public ICollection<RouteDetail> RouteDetails { get; set; }
         public ICollection<Bus> Buses { get; set; }
+
     }
 }
